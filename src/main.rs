@@ -29,7 +29,7 @@ fn main() {
         let dir = std::path::Path::new(matches.value_of("path").unwrap());
         println!("{}", "Running `apt-get update`...".green());
         Command::new("apt-get")
-            .arg("--update")
+            .arg("update")
             .spawn()
             .unwrap()
             .wait()
