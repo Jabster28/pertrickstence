@@ -26,6 +26,23 @@ fn main() {
         panic!("You must run this executable with root permissions");
     }
     if let Some(ref matches) = matches.subcommand_matches("add") {
+        let dir = std::path::Path::new(matches.value_of("path").unwrap());
+        println!("{}", "Running `apt-get update`...".green());
+        Command::new("apt-get")
+            .arg("--update")
+            .spawn()
+            .unwrap()
+            .wait()
+            .unwrap();
+        println!("Saving apt lists...");
+        Command::new("tar")
+            .args("zcf - ".split(' '))
+            .arg(dir.join(".persistenceDownloads/lists.tar.gz"))
+            .arg("/var/lib/apt/lists/")
+            .spawn()
+            .unwrap()
+            .wait()
+            .unwrap();
         let o: Vec<&str> = matches.values_of("packages").unwrap().collect();
         // solution taken from https://stackoverflow.com/a/45489718
         let mut g = vec![];
@@ -38,7 +55,6 @@ fn main() {
         for i in w {
             g.push(i)
         }
-        let dir = std::path::Path::new(matches.value_of("path").unwrap());
         let _a = Command::new("mkdir")
             .current_dir(dir)
             .arg("-p")
@@ -99,6 +115,15 @@ fn main() {
             .unwrap();
     } else if let Some(ref matches) = matches.subcommand_matches("install") {
         let dir = std::path::Path::new(matches.value_of("path").unwrap());
+        println!("{}", "Re-syncing database...");
+        Command::new("tar")
+            .args("zxf - ".split(' '))
+            .arg(dir.join(".persistenceDownloads/lists.tar.gz"))
+            .current_dir("/")
+            .spawn()
+            .unwrap()
+            .wait()
+            .unwrap();
         Command::new("dpkg")
             .arg("-i")
             .arg("*.deb")
