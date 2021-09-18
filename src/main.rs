@@ -37,7 +37,7 @@ fn main() {
         println!("Saving apt lists...");
         Command::new("tar")
             .args("zcf".split(' '))
-            .arg(dir.join(".persistenceDownloads/lists.tar.gz"))
+            .arg(dir.join(".pertrickstenceDownloads/lists.tar.gz"))
             .arg("/var/lib/apt/lists/")
             .spawn()
             .unwrap()
@@ -118,7 +118,7 @@ fn main() {
         println!("{}", "Re-syncing database...");
         Command::new("tar")
             .args("zxf".split(' '))
-            .arg(dir.join(".persistenceDownloads/lists.tar.gz"))
+            .arg(dir.join(".pertrickstenceDownloads/lists.tar.gz"))
             .current_dir("/")
             .spawn()
             .unwrap()
