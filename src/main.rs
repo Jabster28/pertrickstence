@@ -36,7 +36,7 @@ fn main() {
             .unwrap();
         println!("Saving apt lists...");
         Command::new("tar")
-            .args("zcf - ".split(' '))
+            .args("zcf".split(' '))
             .arg(dir.join(".persistenceDownloads/lists.tar.gz"))
             .arg("/var/lib/apt/lists/")
             .spawn()
@@ -117,7 +117,7 @@ fn main() {
         let dir = std::path::Path::new(matches.value_of("path").unwrap());
         println!("{}", "Re-syncing database...");
         Command::new("tar")
-            .args("zxf - ".split(' '))
+            .args("zxf".split(' '))
             .arg(dir.join(".persistenceDownloads/lists.tar.gz"))
             .current_dir("/")
             .spawn()
