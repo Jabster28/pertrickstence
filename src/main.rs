@@ -7,21 +7,21 @@ use std::{convert::TryInto, process::Command};
 
 fn main() {
     let matches = App::new("pertrickstence")
-        .about(
-            "Allows for persistence with debian packages without needing a persistence partition by using a folder on the flash drive",
-        )
-        .help("Path to USB stick. Used to store saved packages. You can drag and drop the root folder from your flash drive")
-        .setting(clap::AppSettings::ArgRequiredElseHelp)
-        .version("1.0.0")
-        .author("Jabster28 <justynboyer@gmail.com>")
-        .subcommand(
-            SubCommand::with_name("add")
-                .about("add a package to your live debian install and the flash drive").arg(Arg::with_name("packages").value_name("PACKAGES") .help("Packages to install").case_insensitive(true).takes_value(true).index(1).required(true).multiple(true)).arg(Arg::with_name("only-needed").short("o").long("only-needed").help("Only append packages that aren't already present. NOTE: MAY BREAK FUTURE INSTALLS IF VANILLA APT IS USED DURING SESSION"))
+    .about(
+        "Allows for persistence with debian packages without needing a persistence partition by using a folder on the flash drive",
+    )
+    .help("Path to USB stick. Used to store saved packages. You can drag and drop the root folder from your flash drive")
+    .setting(clap::AppSettings::ArgRequiredElseHelp)
+    .version("1.0.0")
+    .author("Jabster28 <justynboyer@gmail.com>")
+    .subcommand(
+        SubCommand::with_name("add")
+        .about("add a package to your live debian install and the flash drive").arg(Arg::with_name("packages").value_name("PACKAGES") .help("Packages to install").case_insensitive(true).takes_value(true).index(1).required(true).multiple(true)).arg(Arg::with_name("only-needed").short("o").long("only-needed").help("Only append packages that aren't already present. NOTE: MAY BREAK FUTURE INSTALLS IF VANILLA APT IS USED DURING SESSION"))
         .arg(Arg::with_name("path").long("path").short("p").case_insensitive(true).takes_value(true).required(true)))
         .subcommand(
             SubCommand::with_name("install")
-                .about("install all packages to your live install").arg(Arg::with_name("path").long("path").short("p").case_insensitive(true).takes_value(true).required(true)))
-        .get_matches();
+            .about("install all packages to your live install").arg(Arg::with_name("path").long("path").short("p").case_insensitive(true).takes_value(true).required(true)))
+            .get_matches();
     if !Uid::effective().is_root() {
         panic!("You must run this executable with root permissions");
     }
