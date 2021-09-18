@@ -10,22 +10,13 @@ fn main() {
         .about(
             "Allows for persistence with debian packages without needing a persistence partition by using a folder on the flash drive",
         )
+        .arg(Arg::with_name("path").long("path").short("p").help("Path to USB stick. Used to store saved packages. You can drag and drop the root folder from your flash drive").case_insensitive(true).takes_value(true).required(true))
         .setting(clap::AppSettings::ArgRequiredElseHelp)
         .version("1.0.0")
         .author("Jabster28 <justynboyer@gmail.com>")
         .subcommand(
             SubCommand::with_name("add")
-                .about("add a package to your live debian install and the flash drive")
-                .arg(Arg::with_name("packages")
-                        .value_name("PACKAGES")
-                        .help("Packages to install")
-                        .case_insensitive(true)
-                        .takes_value(true).index(1).required(true).multiple(true)
-                )
-                .arg(Arg::with_name("path").long("path").short("p").help("Path to USB stick. Used to store saved packages. You can drag and drop the root folder from your flash drive")
-                .case_insensitive(true)
-                                                                                                                     .takes_value(true).required(true))
-              .arg(Arg::with_name("only-needed").short("o").long("only-needed").help("Only append packages that aren't already present. NOTE: MAY BREAK FUTURE INSTALLS IF VANILLA APT IS USED DURING SESSION"))
+                .about("add a package to your live debian install and the flash drive").arg(Arg::with_name("packages").value_name("PACKAGES") .help("Packages to install").case_insensitive(true).takes_value(true).index(1).required(true).multiple(true)).arg(Arg::with_name("only-needed").short("o").long("only-needed").help("Only append packages that aren't already present. NOTE: MAY BREAK FUTURE INSTALLS IF VANILLA APT IS USED DURING SESSION"))
         )
         .subcommand(
             SubCommand::with_name("install")
@@ -102,6 +93,23 @@ fn main() {
             .arg("install")
             .arg("-y")
             .args(l)
+            .spawn()
+            .unwrap()
+            .wait()
+            .unwrap();
+    } else if let Some(ref matches) = matches.subcommand_matches("install") {
+        let dir = std::path::Path::new(matches.value_of("path").unwrap());
+        Command::new("dpkg")
+            .arg("-i")
+            .arg("*.deb")
+            .current_dir(dir.join(".pertrickstenceDownloads"))
+            .spawn()
+            .unwrap()
+            .wait()
+            .unwrap();
+        Command::new("apt-get")
+            .arg("--fix-broken")
+            .arg("install")
             .spawn()
             .unwrap()
             .wait()
