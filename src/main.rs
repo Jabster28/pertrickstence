@@ -114,7 +114,7 @@ fn main() {
             .unwrap();
     } else if let Some(ref matches) = matches.subcommand_matches("install") {
         let dir = std::path::Path::new(matches.value_of("path").unwrap());
-        println!("{}", "Re-syncing database...");
+        println!("{}", "Re-syncing database...".green());
         Command::new("tar")
             .args("zxf".split(' '))
             .arg(dir.join(".pertrickstenceDownloads/lists.tar.gz"))
@@ -123,9 +123,17 @@ fn main() {
             .unwrap()
             .wait()
             .unwrap();
+        println!("{}", "Installing packages...".green());
+        let g = Command::new("ls")
+            .arg(dir.join(".pertrickstenceDownloads"))
+            .output()
+            .unwrap()
+            .stdout;
+        let res = std::str::from_utf8(&g).unwrap();
+        let rex = Regex::new(r"(?m).*\.deb").unwrap();
         Command::new("dpkg")
             .arg("-i")
-            .arg("*.deb")
+            .args(rex.captures_iter(res).map(|f| f.get(0).unwrap().as_str()))
             .current_dir(dir.join(".pertrickstenceDownloads"))
             .spawn()
             .unwrap()
