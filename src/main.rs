@@ -27,6 +27,14 @@ fn main() {
     }
     if let Some(ref matches) = matches.subcommand_matches("add") {
         let dir = std::path::Path::new(matches.value_of("path").unwrap());
+        let _a = Command::new("mkdir")
+            .current_dir(dir)
+            .arg("-p")
+            .arg(".pertrickstenceDownloads")
+            .spawn()
+            .unwrap()
+            .wait()
+            .unwrap();
         println!("{}", "Running `apt-get update`...".green());
         Command::new("apt-get")
             .arg("update")
@@ -55,14 +63,6 @@ fn main() {
         for i in w {
             g.push(i)
         }
-        let _a = Command::new("mkdir")
-            .current_dir(dir)
-            .arg("-p")
-            .arg(".pertrickstenceDownloads")
-            .spawn()
-            .unwrap()
-            .wait()
-            .unwrap();
         let mut j = vec![];
         let sty = ProgressStyle::default_bar()
             .template("[{elapsed_precise}] {bar:40.cyan/blue} {pos:>7}/{len:7} {msg}")
