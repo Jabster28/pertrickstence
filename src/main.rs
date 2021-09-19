@@ -1,9 +1,10 @@
+use std::{convert::TryInto, process::Command};
+
 use clap::{App, Arg, SubCommand};
 use colored::Colorize;
 use indicatif::{ProgressBar, ProgressStyle};
 use nix::unistd::Uid;
 use regex::Regex;
-use std::{convert::TryInto, process::Command};
 
 fn main() {
     let matches = App::new("pertrickstence")
@@ -56,7 +57,8 @@ fn main() {
         let x = Command::new("apt-cache").args("depends --recurse --no-recommends --no-suggests --no-conflicts --no-breaks --no-replaces --no-enhances --no-pre-depends".split(' ')).args(o).output().unwrap();
         let regex = Regex::new(r"(?m)^\w.*").unwrap();
 
-        // result will be an iterator over tuples containing the start and end indices for each match in the string
+        // result will be an iterator over tuples containing the start and end indices
+        // for each match in the string
         let result = regex.captures_iter(std::str::from_utf8(&x.stdout).unwrap());
         let w = result.map(|e| e.get(0).map_or("", |f| f.as_str()));
         for i in w {
